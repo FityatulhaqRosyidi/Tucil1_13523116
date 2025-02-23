@@ -11,9 +11,10 @@ class Piece {
     this.letter = letter;
     this.row = row;
     this.col = col;
-    this.shape = shapePadding(shape);
+    this.shape = shapePadding(shape);  // shape di padding dengan 0 pada bagian kosong agar berbentuk persegi /+ panjang
     }
     
+    // method untuk padding shape
     private List<List<Integer>> shapePadding(List<List<Integer>> shape) {
         for (List<Integer> shapeRow : shape) {
             int delta = this.col - shapeRow.size();
@@ -24,6 +25,7 @@ class Piece {
         return shape;
     }
     
+    // method untuk menampilkan piece (debugging)
     public void getPiece(){
         System.out.println("======================");
         System.out.println("Letter : " + this.letter);
@@ -38,6 +40,7 @@ class Piece {
         }
     }
     
+    // method untuk merotasi piece
     private void rotate(){
         List<List<Integer>> rotated = new ArrayList<>();
         for (int j = this.col - 1; j > -1; j--){
@@ -52,6 +55,7 @@ class Piece {
         this.col = rotated.get(0).size();
     }
     
+    // method untuk mirroing piece
     private void mirror(){
         List<List<Integer>> mirrored = new ArrayList<>();
         for (int i = 0; i < this.row; i++){
@@ -66,6 +70,7 @@ class Piece {
         this.col = mirrored.get(0).size();
     }
     
+    // method untuk menghasilkan 8 kemungkinan posisi piece setelah di rotasi dan mirroring
     public List<List<List<Integer>>> getPositions(){
         List<List<List<Integer>>> pos = new ArrayList<>();
         pos.add(this.shape);
@@ -88,8 +93,8 @@ class Piece {
 
 class Board {
     int row, col;
-    List<List<Integer>> flag;
-    List<List<String>> shape;
+    List<List<Integer>> flag; // board dalam bentuk 0 1
+    List<List<String>> shape; // board dalam bentuk huruf
     
     // constructor
     public Board(int row, int col){
@@ -108,10 +113,11 @@ class Board {
             flag.add(flagRow);
             shape.add(shapeRow);
         }
-        this.flag = flagPadding(flag);
+        this.flag = flagPadding(flag);  // di padding biar aman kalo indexOutOfBound
         this.shape = shape;
     }
     
+    // method untuk padding
     private List<List<Integer>> flagPadding(List<List<Integer>> flag){
         int max = Math.max(this.row, this.col);
         for (int i = 0; i < this.row; i++){
@@ -130,6 +136,7 @@ class Board {
         return flag;
     }
     
+    // method untuk nampilin shape
     public void showBoardShape(){
         for (List<String> row : this.shape){
             for (String c : row) {
@@ -139,6 +146,7 @@ class Board {
         }
     }
     
+    // method untuk nampilin flag
     public void showBoardFlag(){
         for (List<Integer> row : this.flag){
             for (Integer c : row) {
@@ -148,6 +156,7 @@ class Board {
         }
     }
     
+    // method untuk masukin piece ke board
     public void install(List<List<Integer>> shape, int rowOffset, int colOffset, String letter){
         for (int i = 0; i < shape.size(); i++){
             for (int j = 0; j < shape.get(0).size(); j++){
@@ -159,6 +168,7 @@ class Board {
         }
     }
     
+    // method untuk ngeluarin piece dari board
     public void uninstall(List<List<Integer>> shape, int rowOffset, int colOffset){
         for (int i = 0; i < shape.size(); i++){
             for (int j = 0; j < shape.get(0).size(); j++){
@@ -173,6 +183,7 @@ class Board {
 
 
 public class Main {
+    // fungsi untuk baca input
     public static Object[] readFromFile(String filePath) {
         BufferedReader br = null;
         try {
@@ -267,6 +278,7 @@ public class Main {
         }
     }
 
+    // fungsi untuk menulis output ke file
     public static void writeToFile(Board board, String filePath){
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))){
             for (List<String> row : board.shape){
@@ -282,6 +294,7 @@ public class Main {
         }
     }
     
+    // fungsi untuk mengecek apakah piece bisa masuk ke board
     public static boolean isMatch(Board board, List<List<Integer>> shape, int rowOffset, int colOffset){
         try {
             if ((rowOffset < 0) || (colOffset < 0)) {return false;}
@@ -300,6 +313,7 @@ public class Main {
         }
     }
     
+    // fungsi utama, melakukan bruteforcing dan backtracking untuk menemukan solusi
     public static Object[] bruteForce(Board board, List<Piece> pieces, int count) {
         for (int rowOffset = 0; rowOffset < board.row; rowOffset++){
             for (int colOffset = 0; colOffset < board.col; colOffset++){
@@ -310,26 +324,20 @@ public class Main {
                             for (int rowPointer = 0; rowPointer < shape.size(); rowPointer++){
                                 for (int colPointer = 0; colPointer < shape.get(0).size(); colPointer++){
                                     count++;
-                                    if (isMatch(board, shape, rowOffset - rowPointer, colOffset - colPointer)){
+                                    if (isMatch(board, shape, rowOffset - rowPointer, colOffset - colPointer)){  // jika piece bisa masuk ke board
                                         board.install(shape, rowOffset - rowPointer, colOffset - colPointer, letter);
-                                    //    board.showBoardShape();
-                                    //    try {
-                                    //        Thread.sleep(10);
-                                    //    } catch (InterruptedException e) {
-                                    //        
-                                    //    }
                                         
                                         List<Piece> nextPieces = new ArrayList<>();
                                         for (Piece pc : pieces){
                                             if (!pc.equals(currPiece)){
-                                                nextPieces.add(pc);
+                                                nextPieces.add(pc);  // nextPieces berisi semua piece kecuali piece saat ini
                                             }
                                         }
-                                        Object[] result = bruteForce(board, nextPieces, count);
+                                        Object[] result = bruteForce(board, nextPieces, count);  // rekurens
                                         boolean isComplete = (boolean)result[0];
                                         count = (int)result[1];
                                         if (isComplete){
-                                            return new Object[]{true, count};
+                                            return new Object[]{true, count};  // basis
                                         }
                                         board.uninstall(shape, rowOffset - rowPointer, colOffset - colPointer);
                                     }
@@ -341,10 +349,10 @@ public class Main {
                 }
             }
         }
-        return new Object[]{true, count};
+        return new Object[]{true, count}; // basis
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")  // tipe list dipastikan sesuai, ga perlu di cek
     public static void main(String[] args) {
 
         try {
@@ -359,18 +367,11 @@ public class Main {
             int m = (int) result[1];
             int n = (int) result[2];
             int p = (int) result[3];
-            
-            // System.out.println("Pieces read : " + pieces.size());
-            // System.out.println("Board dimension : " + m + " x " + n);
+
             
             // membuat object board
             Board board = new Board(m, n);
-            // board.showBoardFlag();
-    
-            // Debugging rotate
-            // for (Piece pc : pieces){
-            //     pc.getPiece();
-            // }
+
     
             
             int count = 0;
@@ -420,4 +421,4 @@ public class Main {
     }
 }
 
-// D:\Repository\13523116_TucilJava>java src\com\example\Main.java
+
