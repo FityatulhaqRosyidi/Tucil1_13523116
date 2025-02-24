@@ -25,6 +25,7 @@ class Piece {
         return shape;
     }
     
+    
     // method untuk menampilkan piece (debugging)
     public void getPiece(){
         System.out.println("======================");
@@ -198,6 +199,23 @@ public class Main {
             // Baris kedua
             String mode = br.readLine();
 
+            // custom mode
+            List<List<Integer>> customBoardFlag = new ArrayList<>();
+            if (mode.equals("CUSTOM")){
+                for (int i = 0; i < m; i++){
+                    String line = br.readLine();
+                    List<Integer> customRow = new ArrayList<>();
+                    for (char cell : line.toCharArray()){
+                        if (cell == 'X'){
+                            customRow.add(1);
+                        } else {  // cell == '.'
+                            customRow.add(0);
+                        }
+                    }
+                    customBoardFlag.add(customRow);
+                }
+            }
+
             // List warna
             String[] colors = {
                 "\u001b[31m", // Merah
@@ -271,7 +289,7 @@ public class Main {
             
 
 
-            return new Object[]{pieces, m, n, p};
+            return new Object[]{pieces, m, n, p, mode, customBoardFlag};
         } catch (IOException | ArrayIndexOutOfBoundsException e) {
             return null;
         }
@@ -361,6 +379,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Masukkan nama file input : ");
             String filename = scanner.nextLine().strip();
+            
 
             Object[] result = readFromFile("test/" + filename);
             
@@ -370,9 +389,22 @@ public class Main {
             int p = (int) result[3];
 
             
+            String mode = (String) result[4];
+            
+            List<List<Integer>> customBoardFlag = (List<List<Integer>>) result[5];
+            
             // membuat object board
             Board board = new Board(m, n);
-
+            
+            if (mode.equals("CUSTOM")){
+                for (int i = 0; i < m; i++){
+                    for (int j = 0; j < n; j++){
+                        if (customBoardFlag.get(i).get(j) == 0){
+                            board.flag.get(i).set(j, 1);
+                        }
+                    }
+                }
+            }
     
             
             int count = 0;
