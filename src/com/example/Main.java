@@ -446,7 +446,7 @@ public class Main {
             scanner.close();
     
             }
-        } catch ( ArrayIndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
+        } catch ( IndexOutOfBoundsException | NullPointerException | NumberFormatException e) {
             System.out.println("\nPastikan nama dan isi file input sudah benar!");
         }
 
