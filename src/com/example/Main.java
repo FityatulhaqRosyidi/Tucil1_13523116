@@ -214,8 +214,7 @@ public class Main {
                 "\u001b[95m", // Magenta Terang
                 "\u001b[96m", // Cyan Terang
                 "\u001b[97m", // Putih Terang
-                "\u001b[90m", // Hitam Terang
-                "\u001b[30m"  // Hitam
+                "\u001b[90m"  // Hitam Terang
             };
 
             // Baris ketiga
@@ -244,7 +243,7 @@ public class Main {
                     row = 0;
                     col = 0;
                     colorIndex++;
-                    colorIndex %= 16;
+                    colorIndex %= 15;
                 }
                 
                 List<Integer> currShapeRow = new ArrayList<>();
@@ -326,6 +325,8 @@ public class Main {
                                     count++;
                                     if (isMatch(board, shape, rowOffset - rowPointer, colOffset - colPointer)){  // jika piece bisa masuk ke board
                                         board.install(shape, rowOffset - rowPointer, colOffset - colPointer, letter);
+
+
                                         
                                         List<Piece> nextPieces = new ArrayList<>();
                                         for (Piece pc : pieces){
