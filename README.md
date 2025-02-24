@@ -22,3 +22,7 @@ javac src\com\example\Main.java
 ```console
 java src\com\example\Main.java
 ```
+
+5. program akan meminta file input dari folder test, pastikan nama file dan isi file sudah sesuai.
+6. kemudian program akan menampilkan hasil penyelesaian puzzle yg mungkin atau pesan gagal
+7. program juga dapat menyimpan hasil penyelesaian puzzle ke sebuah file. nama file diinput oleh user, pastikan menulis ekstensi file (.txt). file akan tersimpan di folder output
